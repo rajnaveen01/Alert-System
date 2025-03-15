@@ -11,8 +11,8 @@ ist = pytz.timezone('Asia/Kolkata')
 
 smtp_server = "smtp.gmail.com"
 smtp_port = 587
-smtp_user = "rajnaveen0007@gmail.com"
-smtp_password = "ajwv ichi sssf emsi"
+smtp_user = " "
+smtp_password = " "
 
 @shared_task(name='SendAlertService.tasks.send_email_alert')
 def send_email_alert(alert_id):
