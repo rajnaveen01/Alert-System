@@ -18,7 +18,7 @@ app = FastAPI()
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-SECRET_KEY = "naveen_raj_secret_key"
+SECRET_KEY = " "
 ALGORITHM = "HS256"
 
 app.add_middleware(
