@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+pymongo
+python-jose
+passlib
+python-decouple
+celery
+redis
+pandas
+python-multipart

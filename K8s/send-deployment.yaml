@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: send-alert-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: send-alert
+  template:
+    metadata:
+      labels:
+        app: send-alert
+    spec:
+      containers:
+        - name: send-alert
+          image: naveenraj12/send:latest
+          env:
+            - name: MONGO_URI
+              value: mongodb://mongo-0.mongo:27017

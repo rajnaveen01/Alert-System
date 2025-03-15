@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: schedule-alert-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: schedule-alert
+  template:
+    metadata:
+      labels:
+        app: schedule-alert
+    spec:
+      containers:
+        - name: schedule-alert
+          image: naveenraj12/schedule:latest
+          env:
+            - name: MONGO_URI
+              value: mongodb://mongo-0.mongo:27017

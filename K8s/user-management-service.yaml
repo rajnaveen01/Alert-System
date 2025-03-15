@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-management-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-management
+  template:
+    metadata:
+      labels:
+        app: user-management
+    spec:
+      containers:
+        - name: user-management
+          image: naveenraj12/user-management:latest
+          ports:
+            - containerPort: 8001
+          env:
+            - name: MONGO_URI
+              value: mongodb://mongo-0.mongo:27017
+            - name: SECRET_KEY
+              value: "naveen_raj_secret_key"
+            - name: REFRESH_SECRET_KEY
+              value: "naveen_raj_refresh_key"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-management-service
+spec:
+  selector:
+    app: user-management
+  ports:
+    - protocol: TCP
+      port: 8001
+      targetPort: 8001

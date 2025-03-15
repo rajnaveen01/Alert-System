@@ -1,0 +1,125 @@
+<mat-card class="all">
+  <mat-card-header class="alert-system">
+    <div class="alert-logo-container">
+      <img src="assets/alert-logo.png" alt="Alert Logo" class="alert-logo" />
+    </div>
+    <div class="alert-title-container">
+      <h1 class="alert-title">ALERT SYSTEM</h1>
+    </div>
+  </mat-card-header>
+</mat-card>
+
+  <div class="nav-container">
+    <mat-form-field appearance="outline" class="nav-dropdown">
+      <mat-label>Navigation</mat-label>
+      <mat-select (selectionChange)="handleNavigation($event.value)">
+        <mat-option value="dashboard">Dashboard</mat-option>
+        <mat-option value="create">Create Alert</mat-option>
+      </mat-select>
+    </mat-form-field>
+  
+    <mat-form-field appearance="outline" class="nav-dropdown">
+      <mat-label>Account</mat-label>
+      <mat-select (selectionChange)="logout()">
+        <mat-option value="logout">Logout</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="Management">
+    <h1>ALERT MANAGEMENT !!</h1>
+  </div>
+
+  <div class="alert-table-container">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Search Alerts</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Search" />
+    </mat-form-field>
+
+    <div class="filter-container">
+      <mat-form-field appearance="outline">
+        <mat-label>Alert Type</mat-label>
+        <mat-select [(ngModel)]="selectedAlertType" (selectionChange)="applyAlertTypeFilter($event.value)">
+          <mat-option *ngFor="let type of alertTypes" [value]="type">{{ type }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    
+      <mat-form-field appearance="outline">
+        <mat-label>Priority</mat-label>
+        <mat-select [(ngModel)]="selectedPriority" (selectionChange)="applyPriorityFilter($event.value)">
+          <mat-option *ngFor="let priority of priorities" [value]="priority">{{ priority }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    
+      <mat-form-field appearance="outline">
+        <mat-label>Start Date</mat-label>
+        <input matInput [matDatepicker]="pickerStart" (dateChange)="applyDateRangeFilter()" [(ngModel)]="startDate" />
+        <mat-datepicker-toggle matSuffix [for]="pickerStart"></mat-datepicker-toggle>
+        <mat-datepicker #pickerStart></mat-datepicker>
+      </mat-form-field>
+    
+      <mat-form-field appearance="outline">
+        <mat-label>End Date</mat-label>
+        <input matInput [matDatepicker]="pickerEnd" (dateChange)="applyDateRangeFilter()" [(ngModel)]="endDate" />
+        <mat-datepicker-toggle matSuffix [for]="pickerEnd"></mat-datepicker-toggle>
+        <mat-datepicker #pickerEnd></mat-datepicker>
+      </mat-form-field>
+
+      <button mat-button (click)="clearFilters()">Clear Filters</button>
+    </div>
+
+    <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+
+      <ng-container matColumnDef="alertId">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Alert ID </th>
+        <td mat-cell *matCellDef="let element"> {{element.alertId}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="alertType">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Alert Type </th>
+        <td mat-cell *matCellDef="let element"> {{element.alertType}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="recipient">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Recipient </th>
+        <td mat-cell *matCellDef="let element"> {{element.recipient}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="subject">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Subject </th>
+        <td mat-cell *matCellDef="let element"> {{element.subject}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="content">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Content </th>
+        <td mat-cell *matCellDef="let element"> {{element.content}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="dateTime">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Date & Time </th>
+        <td mat-cell *matCellDef="let element"> {{element.dateTime}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="priority">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Priority </th>
+        <td mat-cell *matCellDef="let element"> {{element.priority}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="edit">
+        <th mat-header-cell *matHeaderCellDef> Actions </th>
+        <td mat-cell *matCellDef="let element">
+          <button mat-button (click)="editAlert(element)">Edit</button>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="delete">
+        <th mat-header-cell *matHeaderCellDef> Delete </th>
+        <td mat-cell *matCellDef="let element">
+          <button mat-button (click)="deleteAlert(element)">Delete</button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </div>

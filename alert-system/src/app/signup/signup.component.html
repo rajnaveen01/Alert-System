@@ -1,0 +1,45 @@
+<mat-card class="all">
+  <mat-card-header class="alert-system">
+    <div class="alert-logo-container">
+      <img src="assets/alert-logo.png" alt="Alert Logo" class="alert-logo" />
+    </div>
+    <div class="alert-title-container">
+      <h1 class="alert-title">ALERT SYSTEM</h1>
+    </div>
+  </mat-card-header>
+</mat-card>
+          
+
+<div class="signup-container">
+  <mat-card class="signup-card">
+    <h2>Create Account</h2>
+
+    <form (ngSubmit)="onSubmit()" #signupForm="ngForm" autocomplete="off">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Username</mat-label>
+        <input matInput type="text" [(ngModel)]="username" name="username" required placeholder="Username" autocomplete="off" />
+        <mat-icon matSuffix>person</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Email</mat-label>
+        <input matInput type="email" [(ngModel)]="email" name="email" required placeholder="Email" autocomplete="off" />
+        <mat-icon matSuffix>email</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Password</mat-label>
+        <input matInput type="password" [(ngModel)]="password" name="password" required placeholder="Password" autocomplete="off" />
+        <mat-icon matSuffix>lock</mat-icon>
+      </mat-form-field>
+
+      <br />
+      <button mat-raised-button color="primary" type="submit" [disabled]="signupForm.invalid">SIGN UP</button>
+    </form>
+
+    <br />
+    <p>Already Have an Account?
+      <a (click)="Login()" class="signup">Log In</a>
+    </p>
+  </mat-card>
+</div>

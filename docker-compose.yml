@@ -1,0 +1,73 @@
+services:
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+
+  user-management-service:
+    image: user-management-service:latest
+    ports:
+      - "8001:8001"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/db
+      - SECRET_KEY=naveen_raj_secret_key
+      - REFRESH_SECRET_KEY=naveen_raj_refresh_key
+    depends_on:
+      - mongo
+      - redis
+
+  create-alert-service:
+    image: create-alert-service:latest
+    ports:
+      - "8002:8002"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/db
+    depends_on:
+      - mongo
+      - redis
+
+  schedule:
+    image: schedule:latest
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/db
+    depends_on:
+      - mongo
+      - redis
+
+  send:
+    image: send:latest
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/db
+    depends_on:
+      - mongo
+      - redis
+
+  dashboard-service:
+    image: dashboard-service:latest
+    ports:
+      - "8003:8003"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/db
+      - SECRET_KEY=naveen_raj_secret_key
+    depends_on:
+      - mongo
+      - redis
+
+  frontend:
+    image: frontend3:latest
+    ports:
+      - "4200:4200"
+    depends_on:
+      - user-management-service
+      - create-alert-service
+      - dashboard-service
+
+volumes:
+  mongo-data:

@@ -1,0 +1,224 @@
+<mat-card class="all">
+  <mat-card-header class="alert-system">
+    <div class="alert-logo-container">
+      <img src="assets/alert-logo.png" alt="Alert Logo" class="alert-logo" />
+    </div>
+    <div class="alert-title-container">
+      <h1 class="alert-title">ALERT SYSTEM</h1>
+    </div>
+  </mat-card-header>
+</mat-card>
+
+<mat-toolbar class="nav-toolbar">
+  <button mat-icon-button [matMenuTriggerFor]="navMenu">
+    <mat-icon>menu</mat-icon>
+  </button>
+  
+  <mat-menu #navMenu="matMenu">
+    <button mat-menu-item (click)="goToCreateAlert()">
+      <mat-icon>add_alert</mat-icon>
+      <span>Create Alert</span>
+    </button>
+    <button mat-menu-item (click)="goToAlertManagement()">
+      <mat-icon>manage_accounts</mat-icon>
+      <span>Alert Management</span>
+    </button>
+  </mat-menu>
+
+  <button mat-icon-button [matMenuTriggerFor]="accountMenu">
+    <mat-icon>account_circle</mat-icon>
+  </button>
+
+  <mat-menu #accountMenu="matMenu">
+    <button mat-menu-item (click)="logout()">
+      <mat-icon>logout</mat-icon>
+      <span>Logout</span>
+    </button>
+  </mat-menu>
+</mat-toolbar>
+
+<div class="time-panel">
+  <mat-button-toggle-group
+    [value]="selectedTimeRange"
+    (change)="onTimeRangeChange($event.value)"
+    appearance="standard"
+    class="time-toggle-group">
+    <mat-button-toggle value="All">ALL</mat-button-toggle>
+    <mat-button-toggle value="1hour">1 Hour</mat-button-toggle>
+    <mat-button-toggle value="5hours">5 Hours</mat-button-toggle>
+    <mat-button-toggle value="1day">1 Day</mat-button-toggle>
+    <mat-button-toggle value="1week">1 Week</mat-button-toggle>
+    <mat-button-toggle value="1month">1 Month</mat-button-toggle>
+  </mat-button-toggle-group>
+</div>
+
+<div class="dashboard-stats">
+  <mat-card class="stat-card">
+    <div class="stat-content">
+      <div class="stat-header" (click)="filterAlertsByType('MS Teams')">
+        <mat-icon class="bi bi-microsoft-teams">microsoft_teams</mat-icon>
+        <span class="stat-text">MS Teams:</span>
+      </div>
+      <div class="stat-value">{{ alertCounts['MS Teams'] }}</div>
+    </div> 
+  </mat-card>
+
+  <mat-card class="stat-card">
+    <div class="stat-content">
+      <div class="stat-header" (click)="filterAlertsByType('Email')">
+        <mat-icon class="bi bi-envelope">email</mat-icon>
+        <span class="stat-text">Email:</span>
+      </div>
+      <div class="stat-value">{{ alertCounts['Email'] }}</div>
+    </div>
+  </mat-card>
+
+  <mat-card class="stat-card">
+    <div class="stat-content">
+      <div class="stat-header" (click)="filterAlertsByType('SMS')">
+        <mat-icon class="bi bi-chat">chat</mat-icon>
+        <span class="stat-text">SMS:</span>
+      </div>
+      <div class="stat-value">{{ alertCounts['SMS'] }}</div>
+    </div>
+  </mat-card>      
+</div>
+
+<div class="alert-table-container">
+  <mat-form-field appearance="outline" class="search-field">
+    <mat-label>Search Alerts</mat-label>
+    <input matInput (keyup)="applyFilter($event)" placeholder="Search" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Alert Type</mat-label>
+    <mat-select [(value)]="selectedAlertType" (selectionChange)="applyAlertTypeFilter($event.value)">
+      <mat-option *ngFor="let type of alertTypes" [value]="type">{{ type }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Start Date</mat-label>
+    <input matInput [matDatepicker]="pickerStart" (dateChange)="applyDateRangeFilter()" [(ngModel)]="startDate" />
+    <mat-datepicker-toggle matSuffix [for]="pickerStart"></mat-datepicker-toggle>
+    <mat-datepicker #pickerStart></mat-datepicker>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>End Date</mat-label>
+    <input matInput [matDatepicker]="pickerEnd" (dateChange)="applyDateRangeFilter()" [(ngModel)]="endDate" />
+    <mat-datepicker-toggle matSuffix [for]="pickerEnd"></mat-datepicker-toggle>
+    <mat-datepicker #pickerEnd></mat-datepicker>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Priority</mat-label>
+    <mat-select [(value)]="selectedPriority" (selectionChange)="applyPriorityFilter($event.value)">
+      <mat-option *ngFor="let priority of priorities" [value]="priority">{{ priority }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Status</mat-label>
+    <mat-select [(value)]="selectedStatus" (selectionChange)="applyStatusFilter($event.value)">
+      <mat-option *ngFor="let status of statuses" [value]="status">{{ status }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <button mat-button class="clear" (click)="clearFilters()">Clear Filters</button>
+
+  <button mat-button class="create" (click)="openCreateAlertDialog()">Create Alert</button>
+</div>
+
+<table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
+
+  <ng-container matColumnDef="alertType">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Alert Type </th>
+    <td mat-cell *matCellDef="let element">
+      <span *ngIf="!element.isEditMode">{{element.alertType}}</span>
+      <input *ngIf="element.isEditMode" [(ngModel)]="element.alertType" />
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="recipients">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>Recipient</th>
+    <td mat-cell *matCellDef="let element">
+      <div *ngFor="let recipient of element.recipients">
+        {{ recipient }}
+      </div>
+    </td>
+  </ng-container>    
+
+  <ng-container matColumnDef="subject">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Subject </th>
+    <td mat-cell *matCellDef="let element">
+      <span *ngIf="!element.isEditMode">{{element.subject}}</span>
+      <input *ngIf="element.isEditMode" [(ngModel)]="element.subject" />
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="content">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Content </th>
+    <td mat-cell *matCellDef="let element">
+      <span *ngIf="!element.isEditMode">{{element.content}}</span>
+      <input *ngIf="element.isEditMode" [(ngModel)]="element.content" />
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="sent">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Sent Time </th>
+    <td mat-cell *matCellDef="let element">
+      <span *ngIf="!element.isEditMode">{{element.sent | date:'medium'}}</span>
+      <input *ngIf="element.isEditMode" [(ngModel)]="element.sent" />
+    </td>
+  </ng-container>
+  
+  <ng-container matColumnDef="received">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Received Time </th>
+    <td mat-cell *matCellDef="let element">
+      <span *ngIf="!element.isEditMode">{{element.received | date:'medium'}}</span>
+      <input *ngIf="element.isEditMode" [(ngModel)]="element.received" />
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="priority">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Priority </th>
+    <td mat-cell *matCellDef="let element">
+      <span *ngIf="!element.isEditMode">{{element.priority}}</span>
+      <input *ngIf="element.isEditMode" [(ngModel)]="element.priority" />
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="status">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
+    <td mat-cell *matCellDef="let element">
+      <span *ngIf="!element.isEditMode">{{element.status}}</span>
+      <input *ngIf="element.isEditMode" [(ngModel)]="element.status" />
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="action">
+    <th mat-header-cell *matHeaderCellDef> Action </th>
+    <td mat-cell *matCellDef="let element">
+      <button *ngIf="!element.isEditMode" mat-icon-button [matMenuTriggerFor]="menu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="viewAlert(element)">View</button>
+        <button mat-menu-item (click)="editAlert(element)">Edit</button>
+      </mat-menu>
+
+      <button *ngIf="element.isEditMode" mat-button (click)="submitEdit(element)">Submit</button>
+      <button *ngIf="element.isEditMode" mat-button (click)="cancelEdit(element)">Cancel</button>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+
+<div class="pagination-controls">
+  <button mat-button (click)="prevPage()" [disabled]="page === 1">Previous</button>
+  <span>Page {{page}} of {{totalPages}}</span>
+  <button mat-button (click)="nextPage()" [disabled]="page === totalPages">Next</button>
+</div>

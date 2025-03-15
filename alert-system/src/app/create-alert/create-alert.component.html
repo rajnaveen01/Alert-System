@@ -1,0 +1,58 @@
+<mat-card class="all">
+  <mat-card-header class="alert-system">
+    <div class="header-content">
+      <h1>Create Alert</h1>
+      <button mat-button type="button" (click)="Close()" class="close-btn">Close</button>
+    </div>
+  </mat-card-header>
+
+  <div class="alert-form">
+    <label for="fileUpload">Upload File (Optional):</label>
+    <div class="file-upload-wrapper">
+      <div class="file-drop-zone" (dragover)="onDragOver($event)" (drop)="onFileDrop($event)">
+        <p>Drag & Drop your file here, or <span>click to browse</span></p>
+        <input type="file" id="fileUpload" (change)="onFileSelected($event)" class="file-input" accept=".xlsx"/>
+        <button (click)="downloadTemplate()">Download Excel Template</button>
+      </div>
+      <span class="file-name">{{ uploadedFileName || 'No file chosen' }}</span>
+    </div>
+
+    <label for="alertType">Type of Alert:</label>
+    <select id="alertType" [(ngModel)]="alertType">
+      <option value="MS Teams">MS Teams</option>
+      <option value="Email">Email</option>
+      <option value="SMS">SMS</option>
+    </select>
+
+    <label for="recipient">Recipients:</label>
+    <input type="text" id="recipient" [(ngModel)]="newRecipient" placeholder="Enter The Recipient"/>
+    <button mat-button type="button" (click)="addRecipient()">Add Recipient</button>
+
+    <div *ngIf="recipients.length > 0" class="recipient-list">
+      <label>Recipients:</label>
+      <ul>
+        <li *ngFor="let recipient of recipients">{{ recipient }}</li>
+      </ul>
+    </div>
+
+    <label for="subject">Subject:</label>
+    <input type="text" id="subject" [(ngModel)]="subject" placeholder="Enter The Subject" required />
+
+    <label for="content">Content:</label>
+    <textarea id="content" [(ngModel)]="content" rows="4" placeholder="Enter Alert Content Here" required></textarea>
+
+    <label for="dateTime">Receive Time:</label>
+    <input type="datetime-local" id="dateTime" [(ngModel)]="dateTime" required/>
+
+    <label for="priority">Priority:</label>
+    <select id="priority" [(ngModel)]="priority">
+      <option value="High">High</option>
+      <option value="Medium">Medium</option>
+      <option value="Low">Low</option>
+    </select>
+
+    <button mat-button type="button" (click)="createAlert()" class="submit-btn">Create Alert</button>
+    <br>
+
+  </div>
+</mat-card>

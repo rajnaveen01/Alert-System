@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dashboard-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dashboard
+  template:
+    metadata:
+      labels:
+        app: dashboard
+    spec:
+      containers:
+        - name: dashboard
+          image: naveenraj12/dashboard-service:latest
+          ports:
+            - containerPort: 8003
+          env:
+            - name: MONGO_URI
+              value: mongodb://mongo-0.mongo:27017
+            - name: SECRET_KEY
+              value: "naveen_raj_secret_key"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dashboard-service
+spec:
+  selector:
+    app: dashboard
+  ports:
+    - protocol: TCP
+      port: 8003
+      targetPort: 8003

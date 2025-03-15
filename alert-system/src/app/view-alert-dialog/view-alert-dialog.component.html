@@ -1,0 +1,22 @@
+<mat-card class="dialog"> 
+  <div class="header">
+    <h1 class="mat-dialog-title">ALERT DETAILS</h1>
+    <button class="close-button" mat-dialog-close>&times;</button>
+  </div>
+  <div class="mat-dialog-content">
+    <div class="info-row">
+      <p><strong>Recipient:</strong> <span> {{ data.recipients }}</span></p>
+    </div>
+    <div class="info-row priority-status">
+      <p><strong>Priority:</strong> <span> {{ data.priority }}</span></p>
+      <p><strong>Status:</strong> <span> {{ data.status }}</span></p>
+    </div>
+    <div class="info-row">
+      <p><strong>Subject:</strong> {{ data.subject }}</p>
+    </div>
+    <div class="content-box">
+      <p><strong>Content:</strong></p>
+      <div class="content-text"> {{ data.content }}</div>
+    </div>
+  </div>
+</mat-card>
